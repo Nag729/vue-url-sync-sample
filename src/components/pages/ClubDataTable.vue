@@ -11,7 +11,7 @@ type TableColumn = {
   label: string;
   field: string;
   align: "left" | "center" | "right";
-  sortable: boolean;
+  sortable?: boolean;
 };
 const columns: TableColumn[] = [
   {
@@ -19,21 +19,18 @@ const columns: TableColumn[] = [
     label: "チーム名",
     field: "name",
     align: "left",
-    sortable: true,
   },
   {
     name: "prefecture",
     label: "活動地域",
     field: "prefecture",
     align: "left",
-    sortable: true,
   },
   {
     name: "stadium",
     label: "ホームスタジアム",
     field: "stadium",
     align: "left",
-    sortable: true,
   },
   {
     name: "capacity",

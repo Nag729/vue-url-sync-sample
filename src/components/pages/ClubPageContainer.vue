@@ -2,23 +2,27 @@
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { ClubData } from "../../api/club-data";
-import { fetchJ1ClubData } from "../../api/fake-api";
-import ClubDataTable from "../pages/ClubDataTable.vue";
-import ClubSearchForm from "../pages/ClubSearchForm.vue";
+import { FetchClubQuery, fetchClubDataApi } from "../../api/fake-api";
+import ClubDataTable from "./ClubDataTable.vue";
+import ClubSearchForm from "./ClubSearchForm.vue";
 
 const $q = useQuasar();
 const clubDataList = ref<ClubData[]>([]);
 
-// fetch all club data
-$q.loading.show();
-clubDataList.value = await fetchJ1ClubData();
-$q.loading.hide();
+const fetchClubData = async (query?: FetchClubQuery) => {
+  $q.loading.show();
+  clubDataList.value = await fetchClubDataApi(query);
+  $q.loading.hide();
+};
+
+// NOTE: fetch data when created.
+await fetchClubData();
 </script>
 
 <template>
   <div class="page-container">
     <div class="q-pb-lg" style="max-width: 400px">
-      <ClubSearchForm />
+      <ClubSearchForm @update="fetchClubData" />
     </div>
     <div>
       <ClubDataTable :club-data-list="clubDataList" />

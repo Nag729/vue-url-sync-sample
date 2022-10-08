@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { FetchClubQuery } from "../../api/fake-api";
 import {
   ALL_CLUB_NAME_LIST,
   ALL_CLUB_PREFECTURE_LIST,
@@ -32,14 +33,7 @@ const capacity = ref({ min: 0, max: 73000 });
  * Events
  */
 const emits = defineEmits<{
-  (
-    e: "update",
-    props: {
-      name: string;
-      prefecture: string;
-      capacity: { min: number; max: number };
-    }
-  ): void;
+  (e: "update", query: FetchClubQuery): void;
 }>();
 
 const resetForm = () => {
@@ -93,7 +87,6 @@ const emitUpdate = () => {
         :options="prefectureOptions"
         @update:model-value="emitUpdate"
         @filter="filterPrefecture"
-        style="width: 240px"
       >
         <template v-slot:no-option>
           <QItem>
@@ -104,14 +97,15 @@ const emitUpdate = () => {
 
       <div class="q-pt-sm">
         <QBadge>
-          収容人数: {{ capacity.min }} から {{ capacity.max }} まで
+          ホームスタジアム収容人数: {{ capacity.min }} から
+          {{ capacity.max }} まで
         </QBadge>
         <QRange
           v-model="capacity"
-          class="form-item"
           :min="0"
           :max="73000"
           @change="emitUpdate"
+          style="width: 280px"
         />
       </div>
     </div>
@@ -119,7 +113,6 @@ const emitUpdate = () => {
     <QBtn
       class="form-item"
       flat
-      rounded
       color="primary"
       icon="cancel"
       label="絞り込みをリセット"

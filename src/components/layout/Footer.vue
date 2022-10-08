@@ -3,8 +3,9 @@
     <QToolbar>
       <QToolbarTitle>
         <div class="footer-container">
+          <span class="footer-text">Created by&nbsp;</span>
           <a
-            class="footer-text"
+            class="footer-text link-text"
             href="https://github.com/Nag729"
             target="_blank"
           >
@@ -23,6 +24,10 @@
 
   .footer-text {
     font-size: 16px;
+    color: white;
+  }
+
+  .link-text {
     color: $teal-3;
     text-decoration: none;
 
