@@ -1,7 +1,7 @@
 import { ALL_CLUB_DATA_LIST, ClubData } from "./club-data";
 
 export type FetchClubQuery = {
-  name?: string; // あいまい検索
+  name?: string;
   prefecture?: string;
   capacity?: number;
 };

@@ -138,3 +138,9 @@ export const ALL_CLUB_DATA_LIST: ClubData[] = [
     capacity: 24490,
   },
 ];
+
+export const ALL_CLUB_NAME_LIST = ALL_CLUB_DATA_LIST.map((club) => club.name);
+
+export const ALL_CLUB_PREFECTURE_LIST = [
+  ...new Set(ALL_CLUB_DATA_LIST.map((club) => club.prefecture)),
+];

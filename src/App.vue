@@ -12,7 +12,9 @@ import Header from "./components/layout/Header.vue";
 
     <QPageContainer>
       <Suspense>
-        <ClubPage />
+        <template #default>
+          <ClubPage />
+        </template>
       </Suspense>
     </QPageContainer>
 

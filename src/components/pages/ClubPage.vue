@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { ClubData } from "../../api/club-data";
 import { fetchJ1ClubData } from "../../api/fake-api";
 import ClubDataTable from "../pages/ClubDataTable.vue";
+import ClubSearchForm from "../pages/ClubSearchForm.vue";
 
 const $q = useQuasar();
 const clubDataList = ref<ClubData[]>([]);
@@ -16,8 +17,12 @@ $q.loading.hide();
 
 <template>
   <div class="page-container">
-    <!-- <SearchForm /> -->
-    <ClubDataTable :club-data-list="clubDataList" />
+    <div class="q-pb-lg" style="max-width: 400px">
+      <ClubSearchForm />
+    </div>
+    <div>
+      <ClubDataTable :club-data-list="clubDataList" />
+    </div>
   </div>
 </template>
 
