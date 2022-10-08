@@ -1,31 +1,52 @@
-<script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <QLayout view="hHh lpR fFf">
+    <QHeader elevated class="bg-primary text-white">
+      <QToolbar>
+        <QToolbarTitle>
+          Vue.js で検索条件と URL を同期させるサンプル App
+        </QToolbarTitle>
+      </QToolbar>
+    </QHeader>
+
+    <QDrawer show-if-above side="left" bordered>
+      <!-- drawer content -->
+      <q-scroll-area class="fit">
+        <QList>
+          <template v-for="menuItem in menuList" :key="menuItem.label">
+            <QItem clickable :active="menuItem.label === 'Outbox'" v-ripple>
+              <QItemSection avatar>
+                <QIcon :name="menuItem.icon" />
+              </QItemSection>
+              <QItemSection>
+                {{ menuItem.label }}
+              </QItemSection>
+            </QItem>
+          </template>
+        </QList>
+      </q-scroll-area>
+    </QDrawer>
+
+    <QPageContainer>
+      <router-view />
+    </QPageContainer>
+
+    <QFooter elevated class="bg-grey-8 text-white">
+      <QToolbar>
+        <QToolbarTitle>
+          <div>Title</div>
+        </QToolbarTitle>
+      </QToolbar>
+    </QFooter>
+  </QLayout>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<script setup lang="ts">
+import { ref } from "vue";
+
+const menuList = [{ icon: "coffee", label: "ビバレッジ" }];
+
+// const leftDrawerOpen = ref(false);
+// const toggleLeftDrawer = () => {
+//   leftDrawerOpen.value = !leftDrawerOpen.value;
+// };
+</script>
