@@ -104,6 +104,7 @@ const emitUpdate = () => {
           v-model="capacity"
           :min="0"
           :max="73000"
+          :step="1000"
           @change="emitUpdate"
           style="width: 280px"
         />
