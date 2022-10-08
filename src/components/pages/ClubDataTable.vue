@@ -4,6 +4,7 @@ import { ClubData } from "../../api/club-data";
 
 const props = defineProps({
   clubDataList: { type: Array as PropType<ClubData[]>, required: true },
+  loading: { type: Boolean, required: true },
 });
 
 type TableColumn = {
@@ -48,6 +49,8 @@ const columns: TableColumn[] = [
     :rows="props.clubDataList"
     :columns="columns"
     row-key="name"
+    color="primary"
+    :loading="loading"
   >
     <template v-slot:body="props">
       <QTr :props="props">

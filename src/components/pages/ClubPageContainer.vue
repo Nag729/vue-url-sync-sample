@@ -8,15 +8,18 @@ import ClubSearchForm from "./ClubSearchForm.vue";
 
 const $q = useQuasar();
 const clubDataList = ref<ClubData[]>([]);
+const loading = ref(false);
 
 const fetchClubData = async (query?: FetchClubQuery) => {
-  $q.loading.show();
+  loading.value = true;
   clubDataList.value = await fetchClubDataApi(query);
-  $q.loading.hide();
+  loading.value = false;
 };
 
 // NOTE: fetch data when created.
+$q.loading.show();
 await fetchClubData();
+$q.loading.hide();
 </script>
 
 <template>
@@ -25,7 +28,7 @@ await fetchClubData();
       <ClubSearchForm @update="fetchClubData" />
     </div>
     <div>
-      <ClubDataTable :club-data-list="clubDataList" />
+      <ClubDataTable :club-data-list="clubDataList" :loading="loading" />
     </div>
   </div>
 </template>
