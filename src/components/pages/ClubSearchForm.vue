@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { FetchClubQuery } from "../../api/fake-api";
 import {
   ALL_CLUB_NAME_LIST,
@@ -28,6 +28,16 @@ const filterPrefecture = (val: string, update: Function) => {
 
 // Capacity Range
 const capacity = ref({ min: 0, max: 73000 });
+
+// button disabled
+const sameAsDefault = computed(() => {
+  return (
+    !name.value &&
+    !prefecture.value &&
+    capacity.value.min === 0 &&
+    capacity.value.max === 73000
+  );
+});
 
 /**
  * Events
@@ -117,6 +127,7 @@ const emitUpdate = () => {
       color="primary"
       icon="cancel"
       label="絞り込みをリセット"
+      :disabled="sameAsDefault"
       @click="resetForm"
     />
   </div>
