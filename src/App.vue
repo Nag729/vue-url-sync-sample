@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ClubPageContainer from "./components/pages/ClubPageContainer.vue";
 import Drawer from "./components/layout/Drawer.vue";
+import FallbackLoading from "./components/layout/FallbackLoading.vue";
 import Footer from "./components/layout/Footer.vue";
 import Header from "./components/layout/Header.vue";
 </script>
@@ -11,11 +11,16 @@ import Header from "./components/layout/Header.vue";
     <Drawer />
 
     <QPageContainer>
-      <Suspense>
-        <template #default>
-          <ClubPageContainer />
+      <RouterView v-slot="{ Component }">
+        <template v-if="Component">
+          <Suspense>
+            <component :is="Component"></component>
+            <template #fallback>
+              <FallbackLoading />
+            </template>
+          </Suspense>
         </template>
-      </Suspense>
+      </RouterView>
     </QPageContainer>
 
     <Footer />

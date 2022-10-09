@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { useQuasar } from "quasar";
 import { ref } from "vue";
-import { ClubData } from "../../api/club-data";
-import { FetchClubQuery, fetchClubDataApi } from "../../api/fake-api";
-import ClubDataTable from "./ClubDataTable.vue";
-import ClubSearchForm from "./ClubSearchForm.vue";
+import { ClubData } from "../api/club-data";
+import { FetchClubQuery, fetchClubDataApi } from "../api/fake-api";
+import ClubDataTable from "../components/pages/ClubDataTable.vue";
+import ClubSearchForm from "../components/pages/ClubSearchForm.vue";
 
-const $q = useQuasar();
 const clubDataList = ref<ClubData[]>([]);
 const loading = ref(false);
 
@@ -17,9 +15,7 @@ const fetchClubData = async (query?: FetchClubQuery) => {
 };
 
 // NOTE: fetch data when created.
-$q.loading.show();
 await fetchClubData();
-$q.loading.hide();
 </script>
 
 <template>
