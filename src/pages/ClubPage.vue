@@ -1,62 +1,97 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { onBeforeRouteUpdate, useRouter } from "vue-router";
+import {
+  LocationQuery,
+  onBeforeRouteUpdate,
+  useRoute,
+  useRouter,
+} from "vue-router";
 import { ClubData } from "../api/club-data";
-import { FetchClubProps, fetchClubDataApi } from "../api/fake-api";
+import { fetchClubDataApi } from "../api/fake-api";
 import ClubDataTable from "../components/pages/ClubDataTable.vue";
 import ClubSearchForm from "../components/pages/ClubSearchForm.vue";
 import { queryToNumber, queryToString } from "../helper/route-query-helper";
 
 const router = useRouter();
+const route = useRoute();
 
+/**
+ * ref
+ */
+const name = ref("");
+const prefecture = ref("");
+const capacity = ref({ min: 0, max: 73000 });
 const clubDataList = ref<ClubData[]>([]);
 const loading = ref(false);
 
 /**
+ * Sync URL Query Params & Ref Data
+ */
+const updateDataFromUrlQuery = (query: LocationQuery): void => {
+  name.value = queryToString(query.name) ?? "";
+  prefecture.value = queryToString(query.prefecture) ?? "";
+  capacity.value = {
+    min: queryToNumber(query.capacityMin) ?? 0,
+    max: queryToNumber(query.capacityMax) ?? 73000,
+  };
+};
+
+const updateUrlQueryFromData = (): void => {
+  router.push({
+    query: {
+      name: name.value || undefined,
+      prefecture: prefecture.value || undefined,
+      capacityMin: capacity.value?.min ?? undefined,
+      capacityMax: capacity.value?.max ?? undefined,
+    },
+  });
+};
+
+/**
  * API
  */
-const fetchClubData = async (props?: FetchClubProps) => {
+const fetchClubData = async () => {
   loading.value = true;
-  clubDataList.value = await fetchClubDataApi(props);
+  clubDataList.value = await fetchClubDataApi({
+    name: name.value,
+    prefecture: prefecture.value,
+    capacity: capacity.value,
+  });
   loading.value = false;
 };
 
-onBeforeRouteUpdate(async (to, _, next) => {
-  const props: FetchClubProps = {
-    name: queryToString(to.query.name) ?? "",
-    prefecture: queryToString(to.query.prefecture) ?? "",
-    capacity: {
-      min: queryToNumber(to.query.capacityMin) ?? 0,
-      max: queryToNumber(to.query.capacityMax) ?? 73000,
-    },
-  };
-  await fetchClubData(props);
-  next();
-});
-
-// NOTE: fetch data when created.
+/**
+ * Lifecycle Hooks
+ */
+// NOTE: onCreated: fetch data with URL query.
+updateDataFromUrlQuery(route.query);
 await fetchClubData();
 
-/**
- * Handle update form
- */
-const updateForm = async (props: FetchClubProps) => {
-  // router.push({
-  //   query: {
-  //     name: props.name || undefined,
-  //     prefecture: props.prefecture || undefined,
-  //     capacityMin: props.capacity?.min ?? undefined,
-  //     capacityMax: props.capacity?.max ?? undefined,
-  //   },
-  // });
-  await fetchClubData(props);
+// NOTE: onBeforeRouteUpdate: fetch data with URL query, here again.
+onBeforeRouteUpdate(async (to, _, next) => {
+  updateDataFromUrlQuery(to.query);
+  next();
+  await fetchClubData();
+});
+
+const resetForm = () => {
+  name.value = "";
+  prefecture.value = "";
+  capacity.value = { min: 0, max: 73000 };
+  updateUrlQueryFromData();
 };
 </script>
 
 <template>
   <div>
     <div class="q-pb-lg" style="max-width: 400px">
-      <ClubSearchForm @update="updateForm" />
+      <ClubSearchForm
+        v-model:name="name"
+        v-model:prefecture="prefecture"
+        v-model:capacity="capacity"
+        @trigger-search="updateUrlQueryFromData"
+        @reset="resetForm"
+      />
     </div>
     <div>
       <ClubDataTable :club-data-list="clubDataList" :loading="loading" />

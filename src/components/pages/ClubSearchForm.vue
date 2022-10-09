@@ -1,70 +1,78 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { FetchClubProps } from "../../api/fake-api";
+import { computed, PropType } from "vue";
+import CapacityRangeSelect from "./form-item/CapacityRangeSelect.vue";
 import ClubNameSelect from "./form-item/ClubNameSelect.vue";
 import PrefectureSelect from "./form-item/PrefectureSelect.vue";
-import CapacityRangeSelect from "./form-item/CapacityRangeSelect.vue";
+
+const props = defineProps({
+  name: { type: String, default: null },
+  prefecture: { type: String, default: null },
+  capacity: {
+    type: Object as PropType<{ min: number; max: number }>,
+    default: { min: 0, max: 73000 },
+  },
+});
 
 const emits = defineEmits<{
-  (e: "update", props: FetchClubProps): void;
+  (e: "update:name", value: string): void;
+  (e: "update:prefecture", value: string): void;
+  (e: "update:capacity", value: { min: number; max: number }): void;
+  (e: "trigger-search"): void;
+  (e: "reset"): void;
 }>();
 
-// ref
-const name = ref("");
-const prefecture = ref("");
-const capacity = ref({ min: 0, max: 73000 });
+const innerName = computed({
+  get: () => props.name,
+  set: (value: string) => {
+    emits("update:name", value);
+  },
+});
+const innerPrefecture = computed({
+  get: () => props.prefecture,
+  set: (value: string) => {
+    emits("update:prefecture", value);
+  },
+});
+
+const updateCapacity = (value: { min: number; max: number }) => {
+  emits("update:capacity", value);
+};
+
+const changeCapacity = (value: { min: number; max: number }) => {
+  updateCapacity(value);
+  emits("trigger-search");
+};
 
 // button disabled
 const sameAsDefault = computed(() => {
   return (
-    !name.value &&
-    !prefecture.value &&
-    capacity.value.min === 0 &&
-    capacity.value.max === 73000
+    !props.name &&
+    !props.prefecture &&
+    props.capacity.min === 0 &&
+    props.capacity.max === 73000
   );
 });
-
-const resetForm = () => {
-  name.value = "";
-  prefecture.value = "";
-  capacity.value = { min: 0, max: 73000 };
-  emitUpdate();
-};
-
-const updateCapacityRange = (value: { min: number; max: number }) => {
-  capacity.value = value;
-};
-
-const changeCapacityRange = (value: { min: number; max: number }) => {
-  capacity.value = value;
-  emitUpdate();
-};
-
-const emitUpdate = () => {
-  emits("update", {
-    name: name.value,
-    prefecture: prefecture.value,
-    capacity: capacity.value,
-  });
-};
 </script>
 
 <template>
   <div class="outer-container">
     <div class="inner-container">
-      <ClubNameSelect v-model:name="name" @update:name="emitUpdate" />
+      <ClubNameSelect
+        v-model:name="innerName"
+        @update:name="emits('trigger-search')"
+      />
 
       <PrefectureSelect
-        v-model:prefecture="prefecture"
-        @update:prefecture="emitUpdate"
+        v-model:prefecture="innerPrefecture"
+        @update:prefecture="emits('trigger-search')"
       />
 
       <div class="q-pt-sm">
         <CapacityRangeSelect
           :min="capacity.min"
           :max="capacity.max"
-          @update="updateCapacityRange"
-          @change="changeCapacityRange"
+          @update="updateCapacity"
+          @change="changeCapacity"
         />
       </div>
     </div>
@@ -76,7 +84,7 @@ const emitUpdate = () => {
       icon="cancel"
       label="絞り込みをリセット"
       :disabled="sameAsDefault"
-      @click="resetForm"
+      @click="emits('reset')"
     />
   </div>
 </template>
