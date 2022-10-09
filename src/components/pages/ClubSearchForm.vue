@@ -1,32 +1,17 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { FetchClubQuery } from "../../api/fake-api";
-import {
-  ALL_CLUB_NAME_LIST,
-  ALL_CLUB_PREFECTURE_LIST,
-} from "./../../api/club-data";
+import { FetchClubProps } from "../../api/fake-api";
+import ClubNameSelect from "./form-item/ClubNameSelect.vue";
+import PrefectureSelect from "./form-item/PrefectureSelect.vue";
+import CapacityRangeSelect from "./form-item/CapacityRangeSelect.vue";
 
-// Name select
+const emits = defineEmits<{
+  (e: "update", props: FetchClubProps): void;
+}>();
+
+// ref
 const name = ref("");
-const nameOptions = ref(ALL_CLUB_NAME_LIST);
-const filterName = (val: string, update: Function) => {
-  update(() => {
-    nameOptions.value = ALL_CLUB_NAME_LIST.filter((name) => name.includes(val));
-  });
-};
-
-// Prefecture select
 const prefecture = ref("");
-const prefectureOptions = ref(ALL_CLUB_PREFECTURE_LIST);
-const filterPrefecture = (val: string, update: Function) => {
-  update(() => {
-    prefectureOptions.value = ALL_CLUB_PREFECTURE_LIST.filter((prefecture) =>
-      prefecture.includes(val)
-    );
-  });
-};
-
-// Capacity Range
 const capacity = ref({ min: 0, max: 73000 });
 
 // button disabled
@@ -39,17 +24,19 @@ const sameAsDefault = computed(() => {
   );
 });
 
-/**
- * Events
- */
-const emits = defineEmits<{
-  (e: "update", query: FetchClubQuery): void;
-}>();
-
 const resetForm = () => {
   name.value = "";
   prefecture.value = "";
   capacity.value = { min: 0, max: 73000 };
+  emitUpdate();
+};
+
+const updateCapacityRange = (value: { min: number; max: number }) => {
+  capacity.value = value;
+};
+
+const changeCapacityRange = (value: { min: number; max: number }) => {
+  capacity.value = value;
   emitUpdate();
 };
 
@@ -65,58 +52,19 @@ const emitUpdate = () => {
 <template>
   <div class="outer-container">
     <div class="inner-container">
-      <QSelect
-        class="form-item"
-        filled
-        v-model="name"
-        label="クラブ名"
-        use-input
-        hide-selected
-        fill-input
-        input-debounce="0"
-        :options="nameOptions"
-        @update:model-value="emitUpdate"
-        @filter="filterName"
-      >
-        <template v-slot:no-option>
-          <QItem>
-            <QItemSection class="text-grey"> No results </QItemSection>
-          </QItem>
-        </template>
-      </QSelect>
+      <ClubNameSelect v-model:name="name" @update:name="emitUpdate" />
 
-      <QSelect
-        class="form-item"
-        filled
-        v-model="prefecture"
-        label="活動地域"
-        use-input
-        hide-selected
-        fill-input
-        input-debounce="0"
-        :options="prefectureOptions"
-        @update:model-value="emitUpdate"
-        @filter="filterPrefecture"
-      >
-        <template v-slot:no-option>
-          <QItem>
-            <QItemSection class="text-grey"> No results </QItemSection>
-          </QItem>
-        </template>
-      </QSelect>
+      <PrefectureSelect
+        v-model:prefecture="prefecture"
+        @update:prefecture="emitUpdate"
+      />
 
       <div class="q-pt-sm">
-        <QBadge>
-          ホームスタジアム収容人数: {{ capacity.min }} から
-          {{ capacity.max }} まで
-        </QBadge>
-        <QRange
-          v-model="capacity"
-          :min="0"
-          :max="73000"
-          :step="1000"
-          @change="emitUpdate"
-          style="width: 280px"
+        <CapacityRangeSelect
+          :min="capacity.min"
+          :max="capacity.max"
+          @update="updateCapacityRange"
+          @change="changeCapacityRange"
         />
       </div>
     </div>

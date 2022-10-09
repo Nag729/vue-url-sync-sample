@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const menuList = [{ icon: "sports_soccer", label: "J1リーグ" }];
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const menuList = [{ icon: "sports_soccer", label: "J1リーグ", path: "/" }];
 </script>
 
 <template>
@@ -7,8 +10,17 @@ const menuList = [{ icon: "sports_soccer", label: "J1リーグ" }];
     <!-- drawer content -->
     <q-scroll-area class="fit">
       <QList>
-        <template v-for="menuItem in menuList" :key="menuItem.label">
-          <QItem clickable :active="menuItem.label === 'Outbox'" v-ripple>
+        <template
+          v-for="menuItem in menuList"
+          :key="menuItem.label"
+          @click="ro"
+        >
+          <QItem
+            clickable
+            :active="menuItem.label === 'Outbox'"
+            v-ripple
+            @click="router.push(menuItem.path)"
+          >
             <QItemSection avatar>
               <QIcon :name="menuItem.icon" />
             </QItemSection>

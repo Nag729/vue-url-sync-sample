@@ -14,7 +14,9 @@ import Header from "./components/layout/Header.vue";
       <RouterView v-slot="{ Component }">
         <template v-if="Component">
           <Suspense>
-            <component :is="Component"></component>
+            <div class="page-wrapper">
+              <component :is="Component" />
+            </div>
             <template #fallback>
               <FallbackLoading />
             </template>
@@ -26,3 +28,9 @@ import Header from "./components/layout/Header.vue";
     <Footer />
   </QLayout>
 </template>
+
+<style lang="scss">
+.page-wrapper {
+  padding: 2rem;
+}
+</style>
